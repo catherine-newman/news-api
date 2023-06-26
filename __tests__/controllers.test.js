@@ -20,6 +20,7 @@ describe("GET /api", () => {
         .expect(200);
         expect(res.body.endpoints).toEqual(endpoints);
         for (const key in res.body.endpoints) {
+            expect(Object.keys(res.body.endpoints[key])).toHaveLength(4);
             expect(res.body.endpoints[key]).toHaveProperty("description", expect.any(String));
             expect(res.body.endpoints[key]).toHaveProperty("queries", expect.any(Array));
             expect(res.body.endpoints[key]).toHaveProperty("format", expect.any(String));
@@ -37,11 +38,36 @@ describe("GET /api/topics", () => {
         expect(res.body.topics).toHaveLength(3);
         res.body.topics.forEach(topic => {
             expect(typeof topic).toBe("object");
+            expect(Object.keys(topic)).toHaveLength(2);
             expect(topic).toHaveProperty("slug", expect.any(String));
             expect(topic).toHaveProperty("description", expect.any(String));
         });
     })
 });
+
+describe("GET /api/articles", () => {
+    test("responds with an array of all articles as objects, sorted by date in descending order", async () => {
+        const res = await request(app)
+        .get("/api/articles")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles).toBeSortedBy("created_at", { descending : true });
+        articles.forEach(article => {
+            expect(typeof article).toBe("object");
+            expect(Object.keys(article)).toHaveLength(8);
+            expect(article).toHaveProperty("author", expect.any(String));
+            expect(article).toHaveProperty("title", expect.any(String));
+            expect(article).toHaveProperty("article_id", expect.any(Number));
+            expect(article).toHaveProperty("topic", expect.any(String));
+            expect(article).toHaveProperty("created_at", expect.any(String));
+            expect(article).toHaveProperty("votes", expect.any(Number));
+            expect(article).toHaveProperty("article_img_url", expect.any(String));
+            expect(article).toHaveProperty("comment_count", expect.any(Number));
+        })
+    })
+});
+
 
 describe("GET /api/articles/:article_id", () => {
     test("responds with an article object", async () => {
@@ -50,6 +76,7 @@ describe("GET /api/articles/:article_id", () => {
         .expect(200);
         const article = res.body.article;
         expect(typeof article).toBe("object");
+        expect(Object.keys(article)).toHaveLength(8);
         expect(article).toHaveProperty("author", "butter_bridge");
         expect(article).toHaveProperty("title", "Living in the shadow of a great man");
         expect(article).toHaveProperty("article_id", 1);
