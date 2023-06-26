@@ -52,7 +52,7 @@ describe("GET /api/articles", () => {
         .expect(200);
         const articles = res.body.articles;
         expect(Array.isArray(articles)).toBe(true);
-        expect(articles).toBeSortedBy("created_at", { descending : true });
+        expect(articles).toHaveLength(13);
         articles.forEach(article => {
             expect(typeof article).toBe("object");
             expect(Object.keys(article)).toHaveLength(8);
@@ -65,6 +65,13 @@ describe("GET /api/articles", () => {
             expect(article).toHaveProperty("article_img_url", expect.any(String));
             expect(article).toHaveProperty("comment_count", expect.any(Number));
         })
+    })
+    test("responds with an array of all articles as objects, sorted by date in descending order as default", async () => {
+        const res = await request(app)
+        .get("/api/articles")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("created_at", { descending : true });
     })
 });
 
