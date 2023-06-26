@@ -2,7 +2,7 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api",
     "queries": [],
-    "format": "JSON object",
+    "format": "object",
     "exampleResponse": {
       "endpoints": {
         "GET /api/topics": {
@@ -33,27 +33,21 @@
       ]
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": [
-      "author",
-      "topic",
-      "sort_by",
-      "order"
-    ],
-    "format": "array",
+  "GET /api/articles/:article_id": {
+    "description": "serves the article for the specified article id",
+    "queries": [],
+    "format": "object",
     "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
-        }
-      ]
+      "article": {
+        "author": "butter_bridge",
+        "title": "Living in the shadow of a great man",
+        "article_id": 1,
+        "body": "I find this existence challenging",
+        "topic": "mitch",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 100,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
     }
   }
 }
