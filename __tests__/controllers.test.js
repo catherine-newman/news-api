@@ -79,17 +79,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         .get("/api/articles/1/comments")
         .expect(200);
         const comments = res.body.comments;
-        expect(Array.isArray(comments)).toBe(true);
         expect(comments).toHaveLength(11);
         comments.forEach(comment => {
-            expect(typeof comment).toBe("object");
             expect(Object.keys(comment)).toHaveLength(6);
             expect(comment).toHaveProperty("comment_id", expect.any(Number));
             expect(comment).toHaveProperty("votes", expect.any(Number));
             expect(comment).toHaveProperty("created_at", expect.any(String));
             expect(comment).toHaveProperty("author", expect.any(String));
             expect(comment).toHaveProperty("body", expect.any(String));
-            expect(comment).toHaveProperty("article_id", expect.any(Number));
+            expect(comment).toHaveProperty("article_id", 1);
         })
     })
     test("comments should be sorted by most recent first", async () => {
