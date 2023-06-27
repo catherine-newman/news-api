@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const endpoints = require("../endpoints.json");
+const { checkExists } = require("../db/models/utils-model");
 
 beforeEach(() => {
     return seed(data);
@@ -273,6 +274,37 @@ describe("PATCH /api/articles/:article_id", () => {
         const res = await request(app)
         .patch("/api/articles/1")
         .send({ })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("deletes the specified comment", async () => {
+        const res = await request(app)
+        .delete("/api/comments/1")
+        .expect(204);
+        try {
+            await checkExists("comments", "comment_id", 1);
+        } catch(err) {
+            expect(err).toEqual({"msg": "Not Found", "status": 404})
+        }
+    })
+    test("responds with status 204 and no content", async () => {
+        const res = await request(app)
+        .delete("/api/comments/1")
+        .expect(204);
+        expect(res.body).toEqual({});
+    })
+    test("status:404, responds with an error message when there are no matching comments", async () => {
+        const res = await request(app)
+        .delete("/api/comments/50")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("status:400, responds with an error message when the comment id is not an integer", async () => {
+        const res = await request(app)
+        .delete("/api/comments/banana")
         .expect(400);
         expect(res.body.msg).toBe("Bad Request");
     })
