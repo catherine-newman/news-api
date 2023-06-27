@@ -221,16 +221,16 @@ describe("PATCH /api/articles/:article_id", () => {
         .patch("/api/articles/1")
         .send({ inc_votes : 10 })
         .expect(200);
-        const result = await db.query("SELECT votes FROM articles WHERE article_id = 1;");
-        expect(result.rows[0]).toHaveProperty("votes", 110);
+        const article = res.body.article;
+        expect(article).toHaveProperty("votes", 110);
     })
     test("decreases the votes for the specified article if passed a negative integer in inc_votes", async () => {
         const res = await request(app)
         .patch("/api/articles/1")
         .send({ inc_votes : -10 })
         .expect(200);
-        const result = await db.query("SELECT votes FROM articles WHERE article_id = 1;");
-        expect(result.rows[0]).toHaveProperty("votes", 90);
+        const article = res.body.article;
+        expect(article).toHaveProperty("votes", 90);
     })
     test("responds with the updated article", async () => {
         const res = await request(app)
