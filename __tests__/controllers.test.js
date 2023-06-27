@@ -99,7 +99,13 @@ describe("GET /api/articles/:article_id/comments", () => {
         const comments = res.body.comments;
         expect(comments).toBeSortedBy("created_at", { descending : true });
     })
-    test("status:404, responds with an error message when there are no matches", async () => {
+    test("status:200, responds with an an empty array when article exists but there are no comments", async () => {
+        const res = await request(app)
+        .get("/api/articles/4/comments")
+        .expect(200);
+        expect(res.body.comments).toEqual([]);
+    })
+    test("status:404, responds with an error message when there are no matching articles", async () => {
         const res = await request(app)
         .get("/api/articles/50/comments")
         .expect(404);
