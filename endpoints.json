@@ -49,5 +49,22 @@
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves the comments for the specified article id, ordered with the most recent comments first",
+    "queries": [],
+    "format": "array",
+    "exampleResponse": {
+      "comments": [
+        {
+          "author": "icellusedkars",
+          "article_id": 1,
+          "body": "Fruit pastilles",
+          "created_at": "2020-06-15T10:25:00.000Z",
+          "votes": 0,
+          "comment_id": 13
+        }
+      ]
+    }
   }
 }

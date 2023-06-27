@@ -8,3 +8,12 @@ exports.selectArticle = async (article_id) => {
     }
     return data.rows[0];
 }
+
+exports.selectArticleComments = async (article_id) => {
+    const data = await db.query("SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = $1 ORDER BY created_at DESC", [article_id]);
+    const result = data.rows[0];
+    if (!result) {
+        return Promise.reject({ status: 404, msg: "Not Found"});
+    }
+    return data.rows;
+}
