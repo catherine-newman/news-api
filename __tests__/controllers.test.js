@@ -28,6 +28,19 @@ describe("catch all endpoint to handle calls to endpoints that don't exist", () 
         .expect(404);
         expect(res.body.msg).toBe("Not Found");
     })
+    test("PATCH status:404, responds with an error message when the endpoint doesn't exist", async () => {
+        const res = await request(app)
+        .patch("/dfgdfgdfg")
+        .send({ })
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("DELETE status:404, responds with an error message when the endpoint doesn't exist", async () => {
+        const res = await request(app)
+        .delete("/dfgdfgdfg")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
 });
 
 describe("GET /api", () => {
@@ -88,6 +101,21 @@ describe("GET /api/articles", () => {
     })
 });
 
+describe("GET /api/users", () => {
+    test("responds with an array of all users as objects", async () => {
+        const res = await request(app)
+        .get("/api/users")
+        .expect(200);
+        const users = res.body.users;
+        expect(users).toHaveLength(4);
+        users.forEach(user => {
+            expect(Object.keys(user)).toHaveLength(3);
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+        })
+    })
+});
 
 describe("GET /api/articles/:article_id", () => {
     test("responds with an article object", async () => {
