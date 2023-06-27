@@ -101,6 +101,21 @@ describe("GET /api/articles", () => {
     })
 });
 
+describe("GET /api/users", () => {
+    test("responds with an array of all users as objects", async () => {
+        const res = await request(app)
+        .get("/api/users")
+        .expect(200);
+        const users = res.body.users;
+        expect(users).toHaveLength(4);
+        users.forEach(user => {
+            expect(Object.keys(user)).toHaveLength(3);
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+        })
+    })
+});
 
 describe("GET /api/articles/:article_id", () => {
     test("responds with an article object", async () => {
