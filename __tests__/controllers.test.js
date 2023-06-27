@@ -13,6 +13,22 @@ afterAll(() => {
     if (db.end) db.end();
 });
 
+describe("catch all endpoint to handle calls to endpoints that don't exist", () => {
+    test("GET status:404, responds with an error message when the endpoint doesn't exist", async () => {
+        const res = await request(app)
+        .get("/dfgdfgdfg")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("POST status:404, responds with an error message when the endpoint doesn't exist", async () => {
+        const res = await request(app)
+        .post("/dfgdfgdfg")
+        .send({ })
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+});
+
 describe("GET /api", () => {
     test("responds with an object describing all the available endpoints, each endpoint including a description, queries, format and example response", async () => {
         const res = await request(app)
@@ -23,7 +39,7 @@ describe("GET /api", () => {
             expect(Object.keys(res.body.endpoints[key])).toHaveLength(4);
             expect(res.body.endpoints[key]).toHaveProperty("description", expect.any(String));
             expect(res.body.endpoints[key]).toHaveProperty("queries", expect.any(Array));
-            expect(res.body.endpoints[key]).toHaveProperty("format", expect.any(String));
+            expect(res.body.endpoints[key]).toHaveProperty("format");
             expect(res.body.endpoints[key]).toHaveProperty("exampleResponse", expect.any(Object));
         }
     })
@@ -34,10 +50,8 @@ describe("GET /api/topics", () => {
         const res = await request(app)
         .get("/api/topics")
         .expect(200);
-        expect(Array.isArray(res.body.topics)).toBe(true);
         expect(res.body.topics).toHaveLength(3);
         res.body.topics.forEach(topic => {
-            expect(typeof topic).toBe("object");
             expect(Object.keys(topic)).toHaveLength(2);
             expect(topic).toHaveProperty("slug", expect.any(String));
             expect(topic).toHaveProperty("description", expect.any(String));
@@ -46,15 +60,13 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles", () => {
-    test("responds with an array of all articles as objects, sorted by date in descending order", async () => {
+    test("responds with an array of all articles as objects", async () => {
         const res = await request(app)
         .get("/api/articles")
         .expect(200);
         const articles = res.body.articles;
-        expect(Array.isArray(articles)).toBe(true);
         expect(articles).toHaveLength(13);
         articles.forEach(article => {
-            expect(typeof article).toBe("object");
             expect(Object.keys(article)).toHaveLength(8);
             expect(article).toHaveProperty("author", expect.any(String));
             expect(article).toHaveProperty("title", expect.any(String));
@@ -66,7 +78,7 @@ describe("GET /api/articles", () => {
             expect(article).toHaveProperty("comment_count", expect.any(Number));
         })
     })
-    test("responds with an array of all articles as objects, sorted by date in descending order as default", async () => {
+    test("article objects should be sorted by date in descending order as default", async () => {
         const res = await request(app)
         .get("/api/articles")
         .expect(200);
@@ -82,7 +94,6 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/1")
         .expect(200);
         const article = res.body.article;
-        expect(typeof article).toBe("object");
         expect(Object.keys(article)).toHaveLength(8);
         expect(article).toHaveProperty("author", "butter_bridge");
         expect(article).toHaveProperty("title", "Living in the shadow of a great man");
@@ -148,5 +159,58 @@ describe("GET /api/articles/:article_id/comments", () => {
         .get("/api/articles/banana/comments")
         .expect(400);
         expect(res.body.msg).toBe("Bad Request");
+    })
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+    test("adds a comment to the specified article", async () => {
+        const res = await request(app)
+        .post("/api/articles/1/comments")
+        .send({ username : "lurker", body : "All I can think about are my cat treats hidden in the cupboard." })
+        .expect(200);
+        const result = await db.query("SELECT * FROM comments WHERE author = 'lurker' AND body = 'All I can think about are my cat treats hidden in the cupboard.'");
+        expect(result.rows).toHaveLength(1);
+    })
+    test("responds with the posted comment", async () => {
+        const res = await request(app)
+        .post("/api/articles/1/comments")
+        .send({ username : "lurker", body : "All I can think about are my cat treats hidden in the cupboard." })
+        .expect(200);
+        const comment = res.body.comment;
+        expect(Object.keys(comment)).toHaveLength(6);
+        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+        expect(comment).toHaveProperty("votes", expect.any(Number));
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+        expect(comment).toHaveProperty("author", "lurker");
+        expect(comment).toHaveProperty("body", "All I can think about are my cat treats hidden in the cupboard.");
+        expect(comment).toHaveProperty("article_id", 1);
+    })
+    test("status:404, responds with an error message when there are no matching articles", async () => {
+        const res = await request(app)
+        .post("/api/articles/50/comments")
+        .send({ username : "lurker", body : "All I can think about are my cat treats hidden in the cupboard." })
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("status:400, responds with an error message when the article id is not an integer", async () => {
+        const res = await request(app)
+        .post("/api/articles/banana/comments")
+        .send({ username : "lurker", body : "All I can think about are my cat treats hidden in the cupboard." })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:400, responds with an error message when the request does not follow the desired format", async () => {
+        const res = await request(app)
+        .post("/api/articles/1/comments")
+        .send({ })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:401, responds with an error message when the user is not in the database", async () => {
+        const res = await request(app)
+        .post("/api/articles/1/comments")
+        .send({ username : "angie", body : "All I can think about are my cat treats hidden in the cupboard." })
+        .expect(401);
+        expect(res.body.msg).toBe("Unauthorized");
     })
 });

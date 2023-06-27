@@ -2,7 +2,7 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api",
     "queries": [],
-    "format": "object",
+    "format": "",
     "exampleResponse": {
       "endpoints": {
         "GET /api/topics": {
@@ -23,7 +23,7 @@
   "GET /api/topics": {
     "description": "serves an array of all topics",
     "queries": [],
-    "format": "array",
+    "format": "",
     "exampleResponse": {
       "topics": [
         {
@@ -36,7 +36,7 @@
   "GET /api/articles/:article_id": {
     "description": "serves the article for the specified article id",
     "queries": [],
-    "format": "object",
+    "format": "",
     "exampleResponse": {
       "article": {
         "author": "butter_bridge",
@@ -53,7 +53,7 @@
   "GET /api/articles/:article_id/comments": {
     "description": "serves the comments for the specified article id, ordered with the most recent comments first",
     "queries": [],
-    "format": "array",
+    "format": "",
     "exampleResponse": {
       "comments": [
         {
@@ -64,13 +64,13 @@
           "votes": 0,
           "comment_id": 13
         }
-        ]
+      ]
     }
   },
   "GET /api/articles": {
     "description": "serves an array of all articles sorted by date created in descending order",
     "queries": [],
-    "format": "array",
+    "format": "",
     "exampleResponse": {
       "articles": [
         {
@@ -82,6 +82,23 @@
           "votes": 0,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "comment_count": 6
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a comment to the specified article id",
+    "queries": [],
+    "format": { "username" : "", "body" : "" },
+    "exampleResponse": {
+      "comment": [
+        {
+          "author": "icellusedkars",
+          "article_id": 1,
+          "body": "Fruit pastilles",
+          "created_at": "2020-06-15T10:25:00.000Z",
+          "votes": 0,
+          "comment_id": 13
         }
       ]
     }
