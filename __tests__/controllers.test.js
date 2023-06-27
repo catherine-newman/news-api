@@ -13,6 +13,15 @@ afterAll(() => {
     if (db.end) db.end();
 });
 
+describe("catch all endpoint to handle calls to endpoints that don't exist", () => {
+    test("GET status:404, responds with an error message when the endpoint doesn't exist", async () => {
+        const res = await request(app)
+        .get("/dfgdfgdfg")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+});
+
 describe("GET /api", () => {
     test("responds with an object describing all the available endpoints, each endpoint including a description, queries, format and example response", async () => {
         const res = await request(app)

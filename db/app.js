@@ -15,6 +15,10 @@ app.get("/api/articles/:article_id", getArticle);
 
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
+app.all("*", (req, res) => {
+    res.status(404).send({ status: 404, msg: "Not Found"});
+})
+
 app.use((err, req, res, next) => {
     if (err.code === "22P02") {
         res.status(400).send({ msg: "Bad Request" });
