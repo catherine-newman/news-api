@@ -28,6 +28,19 @@ describe("catch all endpoint to handle calls to endpoints that don't exist", () 
         .expect(404);
         expect(res.body.msg).toBe("Not Found");
     })
+    test("PATCH status:404, responds with an error message when the endpoint doesn't exist", async () => {
+        const res = await request(app)
+        .patch("/dfgdfgdfg")
+        .send({ })
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("DELETE status:404, responds with an error message when the endpoint doesn't exist", async () => {
+        const res = await request(app)
+        .delete("/dfgdfgdfg")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
 });
 
 describe("GET /api", () => {
