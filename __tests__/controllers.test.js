@@ -34,10 +34,8 @@ describe("GET /api/topics", () => {
         const res = await request(app)
         .get("/api/topics")
         .expect(200);
-        expect(Array.isArray(res.body.topics)).toBe(true);
         expect(res.body.topics).toHaveLength(3);
         res.body.topics.forEach(topic => {
-            expect(typeof topic).toBe("object");
             expect(Object.keys(topic)).toHaveLength(2);
             expect(topic).toHaveProperty("slug", expect.any(String));
             expect(topic).toHaveProperty("description", expect.any(String));
@@ -46,15 +44,13 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles", () => {
-    test("responds with an array of all articles as objects, sorted by date in descending order", async () => {
+    test("responds with an array of all articles as objects", async () => {
         const res = await request(app)
         .get("/api/articles")
         .expect(200);
         const articles = res.body.articles;
-        expect(Array.isArray(articles)).toBe(true);
         expect(articles).toHaveLength(13);
         articles.forEach(article => {
-            expect(typeof article).toBe("object");
             expect(Object.keys(article)).toHaveLength(8);
             expect(article).toHaveProperty("author", expect.any(String));
             expect(article).toHaveProperty("title", expect.any(String));
@@ -66,7 +62,7 @@ describe("GET /api/articles", () => {
             expect(article).toHaveProperty("comment_count", expect.any(Number));
         })
     })
-    test("responds with an array of all articles as objects, sorted by date in descending order as default", async () => {
+    test("article objects should be sorted by date in descending order as default", async () => {
         const res = await request(app)
         .get("/api/articles")
         .expect(200);
@@ -82,7 +78,6 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/1")
         .expect(200);
         const article = res.body.article;
-        expect(typeof article).toBe("object");
         expect(Object.keys(article)).toHaveLength(8);
         expect(article).toHaveProperty("author", "butter_bridge");
         expect(article).toHaveProperty("title", "Living in the shadow of a great man");
