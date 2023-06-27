@@ -134,7 +134,7 @@
     "queries": [],
     "format": "",
     "exampleResponse": {
-      "topics": [
+      "users": [
         {
           "username": "lurker",
           "name": "do_nothing",
