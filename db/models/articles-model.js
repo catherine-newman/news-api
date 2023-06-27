@@ -33,9 +33,12 @@ exports.insertComment = async (article_id, username, body) => {
     if (!username || !body) return Promise.reject({ status: 400, msg: "Bad Request"});
     await checkExists("articles", "article_id", article_id);
     const data = await db.query("INSERT INTO comments (article_id, author, body, votes, created_at) VALUES ($1, $2, $3, 0, $4) RETURNING *;", [article_id, username, body, new Date().toISOString()]);
-    // if (!data.rows.length) {
-    //     await checkExists("articles", "article_id", article_id);
-    //     return [];
-    // }
+    return data.rows[0];
+}
+
+exports.updateArticle = async (article_id, inc_votes) => {
+    if (!inc_votes) return Promise.reject({ status: 400, msg: "Bad Request"});
+    await checkExists("articles", "article_id", article_id);
+    const data = await db.query("UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;", [inc_votes, article_id]);
     return data.rows[0];
 }
