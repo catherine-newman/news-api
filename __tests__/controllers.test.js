@@ -106,3 +106,47 @@ describe("GET /api/articles/:article_id", () => {
         expect(res.body.msg).toBe("Bad Request");
     })
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("responds with an array of comments for the specified article_id", async () => {
+        const res = await request(app)
+        .get("/api/articles/1/comments")
+        .expect(200);
+        const comments = res.body.comments;
+        expect(comments).toHaveLength(11);
+        comments.forEach(comment => {
+            expect(Object.keys(comment)).toHaveLength(6);
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("votes", expect.any(Number));
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+            expect(comment).toHaveProperty("author", expect.any(String));
+            expect(comment).toHaveProperty("body", expect.any(String));
+            expect(comment).toHaveProperty("article_id", 1);
+        })
+    })
+    test("comments should be sorted by most recent first", async () => {
+        const res = await request(app)
+        .get("/api/articles/1/comments")
+        .expect(200);
+        const comments = res.body.comments;
+        expect(comments).toBeSortedBy("created_at", { descending : true });
+    })
+    test("status:200, responds with an an empty array when article exists but there are no comments", async () => {
+        const res = await request(app)
+        .get("/api/articles/4/comments")
+        .expect(200);
+        expect(res.body.comments).toEqual([]);
+    })
+    test("status:404, responds with an error message when there are no matching articles", async () => {
+        const res = await request(app)
+        .get("/api/articles/50/comments")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("status:400, responds with an error message when the article id is not an integer", async () => {
+        const res = await request(app)
+        .get("/api/articles/banana/comments")
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});
