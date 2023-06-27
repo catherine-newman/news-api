@@ -89,18 +89,38 @@
   "POST /api/articles/:article_id/comments": {
     "description": "adds a comment to the specified article id",
     "queries": [],
-    "format": { "username" : "", "body" : "" },
+    "format": {
+      "username": "username",
+      "body": "comment"
+    },
     "exampleResponse": {
-      "comment": [
-        {
-          "author": "icellusedkars",
-          "article_id": 1,
-          "body": "Fruit pastilles",
-          "created_at": "2020-06-15T10:25:00.000Z",
-          "votes": 0,
-          "comment_id": 13
-        }
-      ]
+      "comment": {
+        "author": "icellusedkars",
+        "article_id": 1,
+        "body": "Fruit pastilles",
+        "created_at": "2020-06-15T10:25:00.000Z",
+        "votes": 0,
+        "comment_id": 13
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the specified article with the number of incoming votes",
+    "queries": [],
+    "format": {
+      "inc_votes": 10
+    },
+    "exampleResponse": {
+      "article": {
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "article_id": 1,
+        "author": "weegembump",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 10,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 6
+      }
     }
   }
 }

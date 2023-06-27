@@ -214,3 +214,66 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Unauthorized");
     })
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("increases the votes for the specified article if passed a positive integer in inc_votes", async () => {
+        const res = await request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes : 10 })
+        .expect(200);
+        const result = await db.query("SELECT votes FROM articles WHERE article_id = 1;");
+        expect(result.rows[0]).toHaveProperty("votes", 110);
+    })
+    test("decreases the votes for the specified article if passed a negative integer in inc_votes", async () => {
+        const res = await request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes : -10 })
+        .expect(200);
+        const result = await db.query("SELECT votes FROM articles WHERE article_id = 1;");
+        expect(result.rows[0]).toHaveProperty("votes", 90);
+    })
+    test("responds with the updated article", async () => {
+        const res = await request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes : 10 })
+        .expect(200);
+        const article = res.body.article;
+        expect(Object.keys(article)).toHaveLength(8);
+        expect(article).toHaveProperty("author", "butter_bridge");
+        expect(article).toHaveProperty("title", "Living in the shadow of a great man");
+        expect(article).toHaveProperty("article_id", 1);
+        expect(article).toHaveProperty("body", "I find this existence challenging");
+        expect(article).toHaveProperty("topic", "mitch");
+        expect(article).toHaveProperty("created_at", "2020-07-09T20:11:00.000Z");
+        expect(article).toHaveProperty("votes", 110);
+        expect(article).toHaveProperty("article_img_url", "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+    })
+    test("status:404, responds with an error message when there are no matching articles", async () => {
+        const res = await request(app)
+        .patch("/api/articles/50")
+        .send({ inc_votes : 10 })
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("status:400, responds with an error message when the article id is not an integer", async () => {
+        const res = await request(app)
+        .patch("/api/articles/banana")
+        .send({ inc_votes : 10 })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:400, responds with an error message when inc_votes is not an integer", async () => {
+        const res = await request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes : "banana" })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:400, responds with an error message when the request does not include inc_votes", async () => {
+        const res = await request(app)
+        .patch("/api/articles/1")
+        .send({ })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});
