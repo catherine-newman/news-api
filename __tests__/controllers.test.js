@@ -397,3 +397,22 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(res.body.msg).toBe("Bad Request");
     })
 });
+
+describe("GET /api/users/:username", () => {
+    test("responds with a user object", async () => {
+        const res = await request(app)
+        .get("/api/users/lurker")
+        .expect(200);
+        const user = res.body.user;
+        expect(Object.keys(user)).toHaveLength(3);
+        expect(user).toHaveProperty("username", "lurker");
+        expect(user).toHaveProperty("avatar_url", "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png");
+        expect(user).toHaveProperty("name", "do_nothing");
+    })
+    test("status:404, responds with an error message when there are no matches", async () => {
+        const res = await request(app)
+        .get("/api/users/angie")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+});

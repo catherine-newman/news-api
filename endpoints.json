@@ -69,7 +69,11 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles sorted by date created in descending order",
-    "queries": ["topic", "sort_by: title, author, created_at, votes", "order: asc, desc"],
+    "queries": [
+      "topic",
+      "sort_by: title, author, created_at, votes",
+      "order: asc, desc"
+    ],
     "format": "",
     "exampleResponse": {
       "articles": [
@@ -141,6 +145,18 @@
           "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
         }
       ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves the user for the specified username",
+    "queries": [],
+    "format": "",
+    "exampleResponse": {
+      "user": {
+        "username": "lurker",
+        "name": "do_nothing",
+        "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+      }
     }
   }
 }
