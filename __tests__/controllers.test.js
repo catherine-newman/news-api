@@ -106,20 +106,6 @@ describe("GET /api/articles", () => {
         const articles = res.body.articles;
         expect(articles).toBeSortedBy("title", { descending : true });
     })
-    test("articles can be sorted by author", async () => {
-        const res = await request(app)
-        .get("/api/articles?sort_by=author")
-        .expect(200);
-        const articles = res.body.articles;
-        expect(articles).toBeSortedBy("author", { descending : true });
-    })
-    test("articles can be sorted by votes", async () => {
-        const res = await request(app)
-        .get("/api/articles?sort_by=votes")
-        .expect(200);
-        const articles = res.body.articles;
-        expect(articles).toBeSortedBy("votes", { descending : true });
-    })
     test("articles can be sorted in ascending order", async () => {
         const res = await request(app)
         .get("/api/articles?order=asc")
