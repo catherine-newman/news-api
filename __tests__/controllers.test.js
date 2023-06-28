@@ -99,6 +99,72 @@ describe("GET /api/articles", () => {
         const articles = res.body.articles;
         expect(articles).toBeSortedBy("created_at", { descending : true });
     })
+    test("articles can be sorted by title", async () => {
+        const res = await request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("title", { descending : true });
+    })
+    test("articles can be sorted by author", async () => {
+        const res = await request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("author", { descending : true });
+    })
+    test("articles can be sorted by votes", async () => {
+        const res = await request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("votes", { descending : true });
+    })
+    test("articles can be sorted in ascending order", async () => {
+        const res = await request(app)
+        .get("/api/articles?order=asc")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("created_at", { descending : false });
+    })
+    test("articles can be filtered by topic", async () => {
+        const res = await request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(1);        
+        expect(articles[0]).toHaveProperty("topic", "cats");
+    })
+    test("status:404, responds with an error message when there are no matching articles when filtering by topics", async () => {
+        const res = await request(app)
+        .get("/api/articles?topic=banana")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found"); 
+    })
+    test("status:400, responds with an error message when trying to sort by a column that is not allowed", async () => {
+        const res = await request(app)
+        .get("/api/articles?sort_by=body")
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request"); 
+    })
+    test("status:400, responds with an error message when trying to order by a method that is not allowed", async () => {
+        const res = await request(app)
+        .get("/api/articles?order=banana")
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request"); 
+    })
+    test("responds correctly when passed all 3 queries types at once", async () => {
+        const res = await request(app)
+        .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(12);
+        expect(articles).toBeSortedBy("votes", { descending : false });
+        articles.forEach(article => {
+            expect(article).toHaveProperty("topic", "mitch");
+        })
+
+    })
 });
 
 describe("GET /api/users", () => {

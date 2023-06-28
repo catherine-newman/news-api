@@ -69,7 +69,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles sorted by date created in descending order",
-    "queries": [],
+    "queries": ["topic", "sort_by", "order"],
     "format": "",
     "exampleResponse": {
       "articles": [

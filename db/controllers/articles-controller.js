@@ -1,3 +1,4 @@
+const { sort } = require("../data/test-data/articles");
 const { selectArticle, selectArticles, selectArticleComments, insertComment, updateArticle } = require("../models/articles-model");
 
 exports.getArticle = async (req, res, next) => {
@@ -11,8 +12,9 @@ exports.getArticle = async (req, res, next) => {
 };
 
 exports.getArticles = async (req, res, next) => {
+    const { topic, sort_by, order } = req.query;
     try {
-        const data = await selectArticles();
+        const data = await selectArticles(topic, sort_by, order);
         res.status(200).send({ articles : data });
     } catch(err) {
         return next(err);
