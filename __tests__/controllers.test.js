@@ -182,7 +182,7 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/1")
         .expect(200);
         const article = res.body.article;
-        expect(Object.keys(article)).toHaveLength(8);
+        expect(Object.keys(article)).toHaveLength(9);
         expect(article).toHaveProperty("author", "butter_bridge");
         expect(article).toHaveProperty("title", "Living in the shadow of a great man");
         expect(article).toHaveProperty("article_id", 1);
@@ -191,6 +191,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(article).toHaveProperty("created_at", "2020-07-09T20:11:00.000Z");
         expect(article).toHaveProperty("votes", 100);
         expect(article).toHaveProperty("article_img_url", "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+        expect(article).toHaveProperty("comment_count", 11);
     })
     test("status:404, responds with an error message when there are no matches", async () => {
         const res = await request(app)
