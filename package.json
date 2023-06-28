@@ -1,14 +1,14 @@
 {
-  "name": "be-nc-news",
+  "name": "news-api",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "news-api",
   "main": "listen.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "start": "node listen.js",
+    "start": "node ./db/listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
   "repository": {
