@@ -3,7 +3,7 @@ const { checkExists } = require("./utils-model");
 const format = require("pg-format");
 
 exports.selectArticle = async (article_id) => {
-    const data = await db.query("SELECT author, title, article_id, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id = $1", [article_id]);
+    const data = await db.query("SELECT articles.author, title, articles.article_id, articles.body, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id)::INT as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id", [article_id]);
     const result = data.rows[0];
     if (!result) {
         return Promise.reject({ status: 404, msg: "Not Found"});
