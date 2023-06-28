@@ -27,9 +27,9 @@ exports.selectArticles = async (topic, sort_by = "created_at", order = "desc") =
     }
     queryStr += format(" ORDER BY %I %s", sort_by, order);
     const data = await db.query(queryStr, queryValues);
-    const result = data.rows[0];
-    if (!result) {
-        return Promise.reject({ status: 404, msg: "Not Found"});
+    if (!data.rows.length) {
+        await checkExists("topics", "slug", topic);
+        return [];
     }
     return data.rows;
 }

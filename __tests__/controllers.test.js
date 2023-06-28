@@ -121,11 +121,18 @@ describe("GET /api/articles", () => {
         expect(articles).toHaveLength(1);        
         expect(articles[0]).toHaveProperty("topic", "cats");
     })
-    test("status:404, responds with an error message when there are no matching articles when filtering by topics", async () => {
+    test("status:404, responds with an error message when the filtering topic doesn't exist", async () => {
         const res = await request(app)
         .get("/api/articles?topic=banana")
         .expect(404);
         expect(res.body.msg).toBe("Not Found"); 
+    })
+    test("status:200, responds with an empty array when there are no matching articles when filtering by a valid topic", async () => {
+        const res = await request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toEqual([]);   
     })
     test("status:400, responds with an error message when trying to sort by a column that is not allowed", async () => {
         const res = await request(app)
