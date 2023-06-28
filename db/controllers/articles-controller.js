@@ -1,4 +1,3 @@
-const { sort } = require("../data/test-data/articles");
 const { selectArticle, selectArticles, selectArticleComments, insertComment, updateArticle } = require("../models/articles-model");
 
 exports.getArticle = async (req, res, next) => {
