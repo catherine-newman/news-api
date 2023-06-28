@@ -1,5 +1,6 @@
 const db = require("../connection");
-const { checkExists } = require("./utils-model")
+const { checkExists } = require("./utils-model");
+const format = require("pg-format");
 
 exports.selectArticle = async (article_id) => {
     const data = await db.query("SELECT author, title, article_id, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id = $1", [article_id]);
@@ -10,11 +11,25 @@ exports.selectArticle = async (article_id) => {
     return data.rows[0];
 }
 
-exports.selectArticles = async () => {
-    const data = await db.query("SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id)::INTEGER as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;");
-    const result = data.rows[0];
-    if (!result) {
-        return Promise.reject({ status: 404, msg: "Not Found"});
+exports.selectArticles = async (topic, sort_by = "created_at", order = "desc") => {
+    const allowedSort = ["created_at", "title", "author", "votes"];
+    const allowedOrder = ["asc", "desc"];
+    if (!allowedSort.includes(sort_by) || !allowedOrder.includes(order)) {
+        return Promise.reject({ status: 400, msg: "Bad Request"});
+    }
+    let queryValues = [];
+    let queryStr = "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id)::INTEGER as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id"
+    if (topic) {
+        queryStr += " WHERE articles.topic = $1 GROUP BY articles.article_id";
+        queryValues.push(topic);
+    } else {
+        queryStr += " GROUP BY articles.article_id"
+    }
+    queryStr += format(" ORDER BY %I %s", sort_by, order);
+    const data = await db.query(queryStr, queryValues);
+    if (!data.rows.length) {
+        await checkExists("topics", "slug", topic);
+        return [];
     }
     return data.rows;
 }
