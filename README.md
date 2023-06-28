@@ -3,7 +3,7 @@
 News API that serves data from a PostgreSQL database consisting of articles, comments, topics and users.  
   
 A hosted version of this project can be found [here](https://news-api-qn5t.onrender.com/).  
-(Please allow 30 seconds for it to spin up before loading)  
+(Please allow 30 seconds for it to spin up before viewing)  
   
 ## Tech:  
 * Node.js
