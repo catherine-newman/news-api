@@ -69,8 +69,25 @@ exports.selectArticles = async (topic, sort_by = "created_at", order = "desc", l
 }
 
 
-exports.selectArticleComments = async (article_id) => {
-    const data = await db.query("SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = $1 ORDER BY created_at DESC", [article_id]);
+exports.selectArticleComments = async (article_id, limit, p) => {
+    let queryValues = [article_id];
+    let queryStr = "SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = $1 ORDER BY created_at DESC";
+    if (p) {
+        if (limit) {
+            const offset = limit * (p - 1);
+            queryValues.push(limit, offset);
+            queryStr += " LIMIT $2 OFFSET $3"
+        }
+        else {
+            const offset = 10 * (p - 1);
+            queryValues.push(10, offset);
+                queryStr += " LIMIT $2 OFFSET $3"
+        }
+    } else if (limit) {
+        queryValues.push(limit);
+            queryStr += " LIMIT $2"
+    }
+    const data = await db.query(queryStr, queryValues);
     if (!data.rows.length) {
         await checkExists("articles", "article_id", article_id);
         return [];

@@ -260,6 +260,28 @@ describe("GET /api/articles/:article_id/comments", () => {
         const comments = res.body.comments;
         expect(comments).toBeSortedBy("created_at", { descending : true });
     })
+    test("the number of comments in the response can be limited", async () => {
+        const res = await request(app)
+        .get("/api/articles/1/comments?limit=5")
+        .expect(200);
+        const comments = res.body.comments;
+        expect(comments).toHaveLength(5);
+    })
+    test("the number of comments in the response can be limited, starting from a certain page - p", async () => {
+        const res = await request(app)
+        .get("/api/articles/1/comments?limit=5&p=2")
+        .expect(200);
+        const comments = res.body.comments;
+        expect(comments).toHaveLength(5);
+        expect(comments[0]).toHaveProperty("comment_id", 8);
+    })
+    test("limit defaults to 10 when p is specified with no limit", async () => {
+        const res = await request(app)
+        .get("/api/articles/1/comments?p=2")
+        .expect(200);
+        const comments = res.body.comments;
+        expect(comments).toHaveLength(1);
+    })
     test("status:200, responds with an an empty array when article exists but there are no comments", async () => {
         const res = await request(app)
         .get("/api/articles/4/comments")
