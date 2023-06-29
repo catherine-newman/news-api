@@ -256,7 +256,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         const res = await request(app)
         .post("/api/articles/1/comments")
         .send({ username : "lurker", body : "All I can think about are my cat treats hidden in the cupboard." })
-        .expect(200);
+        .expect(201);
         const result = await db.query("SELECT * FROM comments WHERE author = 'lurker' AND body = 'All I can think about are my cat treats hidden in the cupboard.'");
         expect(result.rows).toHaveLength(1);
     })
@@ -264,7 +264,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         const res = await request(app)
         .post("/api/articles/1/comments")
         .send({ username : "lurker", body : "All I can think about are my cat treats hidden in the cupboard." })
-        .expect(200);
+        .expect(201);
         const comment = res.body.comment;
         expect(Object.keys(comment)).toHaveLength(6);
         expect(comment).toHaveProperty("comment_id", expect.any(Number));
