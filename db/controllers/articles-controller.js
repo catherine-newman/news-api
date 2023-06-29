@@ -11,10 +11,10 @@ exports.getArticle = async (req, res, next) => {
 };
 
 exports.getArticles = async (req, res, next) => {
-    const { topic, sort_by, order } = req.query;
+    const { topic, sort_by, order, limit, p, total_count } = req.query;
     try {
-        const data = await selectArticles(topic, sort_by, order);
-        res.status(200).send({ articles : data });
+        const data = await selectArticles(topic, sort_by, order, limit, p, total_count);
+        res.status(200).send(data);
     } catch(err) {
         return next(err);
     }

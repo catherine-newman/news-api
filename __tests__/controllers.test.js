@@ -121,13 +121,41 @@ describe("GET /api/articles", () => {
         expect(articles).toHaveLength(1);        
         expect(articles[0]).toHaveProperty("topic", "cats");
     })
+    test("the number of articles in the response can be limited", async () => {
+        const res = await request(app)
+        .get("/api/articles?limit=5")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(5);
+    })
+    test("the number of articles in the response can be limited, starting from a certain page - p", async () => {
+        const res = await request(app)
+        .get("/api/articles?limit=5&p=2")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(5);
+        expect(articles[0]).toHaveProperty("article_id", 5);
+    })
+    test("limit defaults to 10 when p is specified with no limit", async () => {
+        const res = await request(app)
+        .get("/api/articles?p=2")
+        .expect(200);
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(3);
+    })
+    test("the number of articles returned can be included as a property in the response, discounting any limit provided", async () => {
+        const res = await request(app)
+        .get("/api/articles?total_count=true")
+        .expect(200);
+        expect(res.body.total_count).toBe(13);
+    })
     test("status:404, responds with an error message when the filtering topic doesn't exist", async () => {
         const res = await request(app)
         .get("/api/articles?topic=banana")
         .expect(404);
         expect(res.body.msg).toBe("Not Found"); 
     })
-    test("status:200, responds with an empty array when there are no matching articles when filtering by a valid topic", async () => {
+    test("status:200, responds with an empty array when there are no matching articles but request is valid", async () => {
         const res = await request(app)
         .get("/api/articles?topic=paper")
         .expect(200);
@@ -146,17 +174,18 @@ describe("GET /api/articles", () => {
         .expect(400);
         expect(res.body.msg).toBe("Bad Request"); 
     })
-    test("responds correctly when passed all 3 queries types at once", async () => {
+    test("responds correctly when passed all query types at once", async () => {
         const res = await request(app)
-        .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+        .get("/api/articles?topic=mitch&sort_by=author&order=asc&limit=5&p=2&total_count=true")
         .expect(200);
         const articles = res.body.articles;
-        expect(articles).toHaveLength(12);
-        expect(articles).toBeSortedBy("votes", { descending : false });
+        expect(articles).toHaveLength(5);
+        expect(articles[0]).toHaveProperty("article_id", 6);
+        expect(articles).toBeSortedBy("author", { descending : false });
         articles.forEach(article => {
             expect(article).toHaveProperty("topic", "mitch");
         })
-
+        expect(res.body.total_count).toBe(5);
     })
 });
 

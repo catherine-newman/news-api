@@ -1,3 +1,4 @@
+const { off } = require("../app");
 const db = require("../connection");
 const { checkExists } = require("./utils-model");
 const format = require("pg-format");
@@ -11,13 +12,14 @@ exports.selectArticle = async (article_id) => {
     return data.rows[0];
 }
 
-exports.selectArticles = async (topic, sort_by = "created_at", order = "desc") => {
+exports.selectArticles = async (topic, sort_by = "created_at", order = "desc", limit, p, total_count) => {
     const allowedSort = ["created_at", "title", "author", "votes"];
     const allowedOrder = ["asc", "desc"];
     if (!allowedSort.includes(sort_by) || !allowedOrder.includes(order)) {
         return Promise.reject({ status: 400, msg: "Bad Request"});
     }
     let queryValues = [];
+    let result = {};
     let queryStr = "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id)::INTEGER as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id"
     if (topic) {
         queryStr += " WHERE articles.topic = $1 GROUP BY articles.article_id";
@@ -26,12 +28,44 @@ exports.selectArticles = async (topic, sort_by = "created_at", order = "desc") =
         queryStr += " GROUP BY articles.article_id"
     }
     queryStr += format(" ORDER BY %I %s", sort_by, order);
+    if (p) {
+        if (limit) {
+            const offset = limit * (p - 1);
+            queryValues.push(limit, offset);
+            if (queryValues.length) {
+                queryStr += ` LIMIT $${queryValues.length - 1} OFFSET $${queryValues.length}`
+            } else {
+                queryStr += " LIMIT $1 OFFSET $2"
+            }
+        }
+        else {
+            const offset = 10 * (p - 1);
+            queryValues.push(10, offset);
+            if (queryValues.length) {
+                queryStr += ` LIMIT $${queryValues.length - 1} OFFSET $${queryValues.length}`
+            } else {
+                queryStr += " LIMIT $1 OFFSET $2"
+            }
+        }
+    } else if (limit) {
+        queryValues.push(limit);
+        if (queryValues.length) {
+            queryStr += ` LIMIT $${queryValues.length}`
+        } else {
+            queryStr += " LIMIT $1"
+        }
+    }
     const data = await db.query(queryStr, queryValues);
     if (!data.rows.length) {
         await checkExists("topics", "slug", topic);
-        return [];
+        result.articles = [];
+    } else {
+        result.articles = data.rows;
     }
-    return data.rows;
+    if (total_count) {
+        result.total_count = data.rows.length;
+    }
+    return result;
 }
 
 

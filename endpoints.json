@@ -72,10 +72,14 @@
     "queries": [
       "topic",
       "sort_by: title, author, created_at, votes",
-      "order: asc, desc"
+      "order: asc, desc",
+      "limit: number",
+      "p: page-number",
+      "total_count: true"
     ],
     "format": "",
     "exampleResponse": {
+      "total_count": 1,
       "articles": [
         {
           "title": "Seafood substitutions are increasing",
