@@ -26,6 +26,7 @@ DELETE /api/articles/:article_id
 GET /api/articles/:article_id/comments
 POST /api/articles/:article_id/comments
 GET /api/users
+POST /api/users
 GET /api/users/:username
 PATCH /api/comments/:comment_id
 DELETE /api/comments/comment_id

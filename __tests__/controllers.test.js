@@ -205,6 +205,42 @@ describe("GET /api/users", () => {
     })
 });
 
+describe("POST /api/users", () => {
+    test("adds a new user", async () => {
+        const res = await request(app)
+            .post("/api/users")
+            .send({ username : "elephant", name : "nelly", avatar_url : "https://www.publicdomainpictures.net/pictures/110000/velka/elephant-1414672044fCi.jpg"})
+            .expect(201);
+        const result = await db.query("SELECT * FROM users WHERE username = 'elephant';");
+        expect(result.rows).toHaveLength(1);
+    })
+    test("responds with the posted user", async () => {
+        const res = await request(app)
+            .post("/api/users")
+            .send({ username : "elephant", name : "nelly", avatar_url : "https://www.publicdomainpictures.net/pictures/110000/velka/elephant-1414672044fCi.jpg"})
+            .expect(201);
+        const user = res.body.user;
+        expect(Object.keys(user)).toHaveLength(3);
+        expect(user).toHaveProperty("username", "elephant");
+        expect(user).toHaveProperty("name", "nelly");
+        expect(user).toHaveProperty("avatar_url", "https://www.publicdomainpictures.net/pictures/110000/velka/elephant-1414672044fCi.jpg");
+    })
+    test("status:400, responds with an error message when the request does not follow the desired format", async () => {
+        const res = await request(app)
+            .post("/api/users")
+            .send({ })
+            .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:400, responds with an error message when the username already exists", async () => {
+        const res = await request(app)
+        .post("/api/topics")
+        .send({ username : "lurker", name : "nelly", avatar_url : "https://www.publicdomainpictures.net/pictures/110000/velka/elephant-1414672044fCi.jpg"})
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});
+
 describe("GET /api/articles/:article_id", () => {
     test("responds with an article object", async () => {
         const res = await request(app)

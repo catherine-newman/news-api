@@ -154,6 +154,22 @@
       ]
     }
   },
+  "POST /api/users": {
+    "description": "adds a new user",
+    "queries": [],
+    "format": {
+      "username": "elephant",
+      "name": "nelly",
+      "avatar_url": "https://www.publicdomainpictures.net/pictures/110000/velka/elephant-1414672044fCi.jpg"
+    },
+    "exampleResponse": {
+      "user": {
+        "username": "elephant",
+        "name": "nelly",
+        "avatar_url": "https://www.publicdomainpictures.net/pictures/110000/velka/elephant-1414672044fCi.jpg"
+      }
+    }
+  },
   "GET /api/users/:username": {
     "description": "serves the user for the specified username",
     "queries": [],
@@ -206,7 +222,10 @@
   "POST /api/topics": {
     "description": "adds a new topic",
     "queries": [],
-    "format": { "slug" : "dogs", "description" : "they bark" },
+    "format": {
+      "slug": "dogs",
+      "description": "they bark"
+    },
     "exampleResponse": {
       "slug": "dogs",
       "description": "they bark"
