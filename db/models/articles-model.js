@@ -57,3 +57,11 @@ exports.updateArticle = async (article_id, inc_votes) => {
     const data = await db.query("UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;", [inc_votes, article_id]);
     return data.rows[0];
 }
+
+exports.insertArticle = async (author, title, body, topic, article_img_url) => {
+    if (!author || !title || !body || !topic) return Promise.reject({ status: 400, msg: "Bad Request"});
+    if (!article_img_url) article_img_url = "https://publicdomainpictures.net/pictures/40000/velka/annoyed-tabby-cat.jpg";
+    const data = await db.query("INSERT INTO articles (author, title, body, topic, article_img_url, created_at, votes) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;", [author, title, body, topic, article_img_url, new Date().toISOString(), 0]);
+    data.rows[0].comment_count = 0;
+    return data.rows[0];
+}

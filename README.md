@@ -18,6 +18,7 @@ A list of available endpoints can also be requested through the API by calling `
 GET /api
 GET /api/topics
 GET /api/articles
+POST /api/articles
 GET /api/articles/:article_id
 PATCH /api/articles/:article_id
 GET /api/articles/:article_id/comments

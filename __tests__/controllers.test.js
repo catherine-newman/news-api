@@ -477,3 +477,60 @@ describe("PATCH /api/comments/:comment_id", () => {
         expect(res.body.msg).toBe("Bad Request");
     })
 });
+
+describe("POST /api/articles", () => {
+    test("adds a new article", async () => {
+        const res = await request(app)
+        .post("/api/articles")
+        .send({ author : "lurker", title : "The Whiskered Observer: A Feline's Perspective on Human Habits", body : "As a superior being adorned with luxurious fur, an eloquent tail, and mesmerizing eyes, I, the ever-watchful feline, have devoted countless hours to studying the peculiar habits of my human companions. From my vantage point on the windowsill, I gaze upon their comings and goings with a mixture of curiosity and amusement.", topic : "cats", article_img_url : "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg" })
+        .expect(201);
+        const result = await db.query("SELECT * FROM articles WHERE author = 'lurker' AND title = 'The Whiskered Observer: A Feline''s Perspective on Human Habits';");
+        expect(result.rows).toHaveLength(1);
+    })
+    test("responds with the posted article", async () => {
+        const res = await request(app)
+        .post("/api/articles")
+        .send({ author : "lurker", title : "The Whiskered Observer: A Feline's Perspective on Human Habits", body : "As a superior being adorned with luxurious fur, an eloquent tail, and mesmerizing eyes, I, the ever-watchful feline, have devoted countless hours to studying the peculiar habits of my human companions. From my vantage point on the windowsill, I gaze upon their comings and goings with a mixture of curiosity and amusement.", topic : "cats", article_img_url : "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg" })
+        .expect(201);
+        const article = res.body.article;
+        expect(Object.keys(article)).toHaveLength(9);
+        expect(article).toHaveProperty("article_id", expect.any(Number));
+        expect(article).toHaveProperty("title", "The Whiskered Observer: A Feline's Perspective on Human Habits");
+        expect(article).toHaveProperty("topic", "cats");
+        expect(article).toHaveProperty("votes", 0);
+        expect(article).toHaveProperty("created_at", expect.any(String));
+        expect(article).toHaveProperty("comment_count", 0);
+        expect(article).toHaveProperty("author", "lurker");
+        expect(article).toHaveProperty("article_img_url", "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg");
+        expect(article).toHaveProperty("body", "As a superior being adorned with luxurious fur, an eloquent tail, and mesmerizing eyes, I, the ever-watchful feline, have devoted countless hours to studying the peculiar habits of my human companions. From my vantage point on the windowsill, I gaze upon their comings and goings with a mixture of curiosity and amusement.");
+    })
+    test("completes the request with a default article_img_url if none is provided", async () => {
+        const res = await request(app)
+        .post("/api/articles")
+        .send({ author : "lurker", title : "The Whiskered Observer: A Feline's Perspective on Human Habits", body : "As a superior being adorned with luxurious fur, an eloquent tail, and mesmerizing eyes, I, the ever-watchful feline, have devoted countless hours to studying the peculiar habits of my human companions. From my vantage point on the windowsill, I gaze upon their comings and goings with a mixture of curiosity and amusement.", topic : "cats" })
+        .expect(201);
+        const article = res.body.article;
+        expect(article).toHaveProperty("article_img_url", "https://publicdomainpictures.net/pictures/40000/velka/annoyed-tabby-cat.jpg");
+    })
+    test("status:401, responds with an error message when the article topic does not exist", async () => {
+        const res = await request(app)
+        .post("/api/articles")
+        .send({ author : "lurker", title : "Bananas", body : "Bananas.", topic : "bananas", article_img_url : "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg" })
+        .expect(401);
+        expect(res.body.msg).toBe("Unauthorized");
+    })
+    test("status:401, responds with an error message when the user does not exist", async () => {
+        const res = await request(app)
+        .post("/api/articles")
+        .send({ author : "angie", title : "Bananas", body : "Bananas.", topic : "cats", article_img_url : "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg" })
+        .expect(401);
+        expect(res.body.msg).toBe("Unauthorized");
+    })
+    test("status:400, responds with an error message when the request does not follow the desired format", async () => {
+        const res = await request(app)
+        .post("/api/articles")
+        .send({ })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});
