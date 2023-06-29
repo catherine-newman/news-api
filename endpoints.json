@@ -211,5 +211,11 @@
       "slug": "dogs",
       "description": "they bark"
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes an article and its associated comments",
+    "queries": [],
+    "format": "",
+    "exampleResponse": {}
   }
 }

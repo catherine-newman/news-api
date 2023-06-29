@@ -620,3 +620,41 @@ describe("POST /api/topics", () => {
         expect(res.body.msg).toBe("Bad Request");
     })
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+    test("deletes the specified article", async () => {
+        const res = await request(app)
+        .delete("/api/articles/1")
+        .expect(204);
+        try {
+            await checkExists("articles", "article_id", 1);
+        } catch(err) {
+            expect(err).toEqual({"msg": "Not Found", "status": 404})
+        }
+    })
+    test("deletes the comments associated with the article", async () => {
+        const res = await request(app)
+        .delete("/api/articles/1")
+        .expect(204);
+        const result = db.query("SELECT * FROM comments WHERE article_id = 1;")
+        expect(result.body).toBe(undefined);
+    })
+    test("responds with status 204 and no content", async () => {
+        const res = await request(app)
+        .delete("/api/articles/1")
+        .expect(204);
+        expect(res.body).toEqual({});
+    })
+    test("status:404, responds with an error message when there are no matching articles", async () => {
+        const res = await request(app)
+        .delete("/api/articles/50")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("status:400, responds with an error message when the article id is not an integer", async () => {
+        const res = await request(app)
+        .delete("/api/articles/banana")
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});

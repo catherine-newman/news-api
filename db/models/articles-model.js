@@ -1,6 +1,7 @@
 const { off } = require("../app");
 const db = require("../connection");
 const { checkExists } = require("./utils-model");
+const { deleteArticleComments } = require("./comments-model");
 const format = require("pg-format");
 
 exports.selectArticle = async (article_id) => {
@@ -115,4 +116,10 @@ exports.insertArticle = async (author, title, body, topic, article_img_url) => {
     const data = await db.query("INSERT INTO articles (author, title, body, topic, article_img_url, created_at, votes) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;", [author, title, body, topic, article_img_url, new Date().toISOString(), 0]);
     data.rows[0].comment_count = 0;
     return data.rows[0];
+}
+
+exports.deleteArticleModel = async (article_id) => {
+    await checkExists("articles", "article_id", article_id);
+    await deleteArticleComments(article_id);
+    return await db.query("DELETE FROM articles WHERE article_id = $1;", [article_id]);
 }

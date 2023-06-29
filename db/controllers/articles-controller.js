@@ -1,4 +1,4 @@
-const { selectArticle, selectArticles, selectArticleComments, insertComment, updateArticle, insertArticle } = require("../models/articles-model");
+const { selectArticle, selectArticles, selectArticleComments, insertComment, updateArticle, insertArticle, deleteArticleModel } = require("../models/articles-model");
 
 exports.getArticle = async (req, res, next) => {
     const { article_id } = req.params;
@@ -58,6 +58,16 @@ exports.postArticle = async (req, res, next) => {
     try {
         const data = await insertArticle(author, title, body, topic, article_img_url);
         res.status(201).send({ article : data });
+    } catch(err) {
+        return next(err);
+    }
+}
+
+exports.deleteArticle = async (req, res, next) => {
+    const { article_id } = req.params;
+    try {
+        await deleteArticleModel(article_id);
+        res.status(204).send();
     } catch(err) {
         return next(err);
     }

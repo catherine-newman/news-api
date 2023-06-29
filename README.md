@@ -22,6 +22,7 @@ GET /api/articles
 POST /api/articles
 GET /api/articles/:article_id
 PATCH /api/articles/:article_id
+DELETE /api/articles/:article_id
 GET /api/articles/:article_id/comments
 POST /api/articles/:article_id/comments
 GET /api/users
