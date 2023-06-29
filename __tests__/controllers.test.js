@@ -416,3 +416,64 @@ describe("GET /api/users/:username", () => {
         expect(res.body.msg).toBe("Not Found");
     })
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+    test("increases the votes for the specified comment if passed a positive integer in inc_votes", async () => {
+        const res = await request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes : 10 })
+        .expect(200);
+        const comment = res.body.comment;
+        expect(comment).toHaveProperty("votes", 26);
+    })
+    test("decreases the votes for the specified comment if passed a negative integer in inc_votes", async () => {
+        const res = await request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes : -10 })
+        .expect(200);
+        const comment = res.body.comment;
+        expect(comment).toHaveProperty("votes", 6);
+    })
+    test("responds with the updated comment", async () => {
+        const res = await request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes : 10 })
+        .expect(200);
+        const comment = res.body.comment;
+        expect(Object.keys(comment)).toHaveLength(6);
+        expect(comment).toHaveProperty("author", "butter_bridge");
+        expect(comment).toHaveProperty("comment_id", 1);
+        expect(comment).toHaveProperty("body", "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!");
+        expect(comment).toHaveProperty("created_at", "2020-04-06T12:17:00.000Z");
+        expect(comment).toHaveProperty("votes", 26);
+        expect(comment).toHaveProperty("article_id", 9);
+    })
+    test("status:404, responds with an error message when there are no matching comments", async () => {
+        const res = await request(app)
+        .patch("/api/comments/50")
+        .send({ inc_votes : 10 })
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+    test("status:400, responds with an error message when the comment id is not an integer", async () => {
+        const res = await request(app)
+        .patch("/api/comments/banana")
+        .send({ inc_votes : 10 })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:400, responds with an error message when inc_votes is not an integer", async () => {
+        const res = await request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes : "banana" })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:400, responds with an error message when the request does not include inc_votes", async () => {
+        const res = await request(app)
+        .patch("/api/comments/1")
+        .send({ })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});

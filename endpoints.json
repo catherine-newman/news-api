@@ -158,5 +158,20 @@
         "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
       }
     }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the specified comment with the number of incoming votes",
+    "queries": [],
+    "format": {
+      "inc_votes": 10
+    },
+    "exampleResponse": {
+      "comment_id": 1,
+      "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      "article_id": 9,
+      "author": "butter_bridge",
+      "votes": 26,
+      "created_at": "2020-04-06T12:17:00.000Z"
+    }
   }
 }
