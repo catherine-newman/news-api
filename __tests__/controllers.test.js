@@ -241,6 +241,61 @@ describe("POST /api/users", () => {
     })
 });
 
+describe("DELETE /api/users/:username", () => {
+    test("deletes the specified user when they have comments and articles associated with them", async () => {
+        const res = await request(app)
+        .delete("/api/users/butter_bridge")
+        .expect(204);
+        try {
+            await checkExists("users", "username", "butter_bridge");
+        } catch(err) {
+            expect(err).toEqual({"msg": "Not Found", "status": 404})
+        }
+    })
+    test("deletes the specified user when they dont have any comments or articles associated with them", async () => {
+        const res = await request(app)
+        .delete("/api/users/lurker")
+        .expect(204);
+        try {
+            await checkExists("users", "username", "lurker");
+        } catch(err) {
+            expect(err).toEqual({"msg": "Not Found", "status": 404})
+        }
+    })
+    test("deletes the comments associated with the user", async () => {
+        const res = await request(app)
+        .delete("/api/users/butter_bridge")
+        .expect(204);
+        try {
+            await checkExists("comments", "author", "butter_bridge");
+        } catch(err) {
+            expect(err).toEqual({"msg": "Not Found", "status": 404})
+        }
+    })
+    test("deletes the articles associated with the user", async () => {
+        const res = await request(app)
+        .delete("/api/users/butter_bridge")
+        .expect(204);
+        try {
+            await checkExists("articles", "author", "butter_bridge");
+        } catch(err) {
+            expect(err).toEqual({"msg": "Not Found", "status": 404})
+        }
+    })
+    test("responds with status 204 and no content", async () => {
+        const res = await request(app)
+        .delete("/api/users/lurker")
+        .expect(204);
+        expect(res.body).toEqual({});
+    })
+    test("status:404, responds with an error message when there are no matching users", async () => {
+        const res = await request(app)
+        .delete("/api/users/angie")
+        .expect(404);
+        expect(res.body.msg).toBe("Not Found");
+    })
+});
+
 describe("GET /api/articles/:article_id", () => {
     test("responds with an article object", async () => {
         const res = await request(app)

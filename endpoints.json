@@ -182,6 +182,12 @@
       }
     }
   },
+  "DELETE /api/users/:username": {
+    "description": "deletes the user for the specified username and all associated articles and comments",
+    "queries": [],
+    "format": "",
+    "exampleResponse": {}
+  },
   "PATCH /api/comments/:comment_id": {
     "description": "updates the specified comment with the number of incoming votes",
     "queries": [],
