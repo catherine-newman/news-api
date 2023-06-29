@@ -30,7 +30,7 @@ PATCH /api/comments/:comment_id
 DELETE /api/comments/comment_id
 ```  
   
-## Setup  
+## Getting Started  
   
 1. Create two .env files for this project: `.env.test` and `.env.development`.  
   
@@ -45,19 +45,14 @@ PGDATABASE=nc_news
 ```
   
   
-2. Install dependencies:  
+2. Install dependencies and initiate the databases:  
 ```
-npm install
-```
-  
-  
-3. Setup the databases:  
-```
+npm install  
 npm run setup-dbs
 ```
   
   
-4. Tests can be run using a separate test database:  
+4. Tests can be run with a separate test database:  
 ```
 npm test
 ```
