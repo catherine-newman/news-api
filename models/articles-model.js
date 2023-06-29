@@ -1,5 +1,5 @@
 const { off } = require("../app");
-const db = require("../connection");
+const db = require("../db/connection");
 const { checkExists } = require("./utils-model");
 const { deleteArticleComments } = require("./comments-model");
 const format = require("pg-format");

@@ -1,10 +1,10 @@
 const request = require("supertest");
-const app = require("../db/app");
+const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const endpoints = require("../endpoints.json");
-const { checkExists } = require("../db/models/utils-model");
+const { checkExists } = require("../models/utils-model");
 
 beforeEach(() => {
     return seed(data);

@@ -1,4 +1,4 @@
-const db = require("../connection");
+const db = require("../db/connection");
 const { checkExists } = require("./utils-model")
 
 exports.deleteCommentModel = async (comment_id) => {

@@ -37,7 +37,7 @@ DELETE /api/comments/comment_id
   
 Into `.env.test` add this line:  
 ```
-PGDATABASE=PGDATABASE=nc_news_test
+PGDATABASE=nc_news_test
 ```
   
 Into `.env.development` add this line:  
