@@ -202,5 +202,14 @@
       "article_img_url": "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg",
       "comment_count": 0
     }
+  },
+  "POST /api/topics": {
+    "description": "adds a new topic",
+    "queries": [],
+    "format": { "slug" : "dogs", "description" : "they bark" },
+    "exampleResponse": {
+      "slug": "dogs",
+      "description": "they bark"
+    }
   }
 }

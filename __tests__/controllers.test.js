@@ -585,3 +585,38 @@ describe("POST /api/articles", () => {
         expect(res.body.msg).toBe("Bad Request");
     })
 });
+
+describe("POST /api/topics", () => {
+    test("adds a new topic", async () => {
+        const res = await request(app)
+        .post("/api/topics")
+        .send({ slug : "dogs", description : "they bark" })
+        .expect(201);
+        const result = await db.query("SELECT * FROM topics WHERE slug = 'dogs';");
+        expect(result.rows).toHaveLength(1);
+    })
+    test("responds with the posted topic", async () => {
+        const res = await request(app)
+        .post("/api/topics")
+        .send({ slug : "dogs", description : "they bark" })
+        .expect(201);
+        const topic = res.body.topic;
+        expect(Object.keys(topic)).toHaveLength(2);
+        expect(topic).toHaveProperty("slug", "dogs");
+        expect(topic).toHaveProperty("description", "they bark");
+    })
+    test("status:400, responds with an error message when the request does not follow the desired format", async () => {
+        const res = await request(app)
+        .post("/api/topics")
+        .send({ })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+    test("status:400, responds with an error message when the topic already exists", async () => {
+        const res = await request(app)
+        .post("/api/topics")
+        .send({ slug : "cats", description : "Not dogs" })
+        .expect(400);
+        expect(res.body.msg).toBe("Bad Request");
+    })
+});

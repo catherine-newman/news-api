@@ -10,7 +10,7 @@ app.all("*", (req, res) => {
 })
 
 app.use((err, req, res, next) => {
-    if (err.code === "22P02") {
+    if (err.code === "22P02" || err.code === "23505") {
         res.status(400).send({ msg: "Bad Request" });
     }
     if (err.code === "23503") {

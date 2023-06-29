@@ -8,3 +8,9 @@ exports.selectTopics = async () => {
     }
     return data.rows;
 }
+
+exports.insertTopic = async (slug, description) => {
+    if (!slug || !description) return Promise.reject({ status: 400, msg: "Bad Request"});
+    const data = await db.query("INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING *;", [slug, description]);
+    return data.rows[0];
+}
