@@ -24,7 +24,13 @@ exports.selectArticles = async (
   p,
   total_count
 ) => {
-  const allowedSort = ["created_at", "title", "author", "votes"];
+  const allowedSort = [
+    "created_at",
+    "title",
+    "author",
+    "votes",
+    "comment_count",
+  ];
   const allowedOrder = ["asc", "desc"];
   if (!allowedSort.includes(sort_by) || !allowedOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });

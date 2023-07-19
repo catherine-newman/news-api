@@ -97,6 +97,13 @@ describe("GET /api/articles", () => {
     const articles = res.body.articles;
     expect(articles).toBeSortedBy("title", { descending: true });
   });
+  test("articles can be sorted by comment_count", async () => {
+    const res = await request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200);
+    const articles = res.body.articles;
+    expect(articles).toBeSortedBy("comment_count", { descending: true });
+  });
   test("articles can be sorted in ascending order", async () => {
     const res = await request(app).get("/api/articles?order=asc").expect(200);
     const articles = res.body.articles;
