@@ -52,10 +52,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves the comments for the specified article id, ordered with the most recent comments first",
-    "queries": [
-      "limit: number",
-      "p: page number"
-    ],
+    "queries": ["limit: number", "p: page number"],
     "format": "",
     "exampleResponse": {
       "comments": [
@@ -74,7 +71,7 @@
     "description": "serves an array of all articles sorted by date created in descending order",
     "queries": [
       "topic",
-      "sort_by: title, author, created_at, votes",
+      "sort_by: title, author, created_at, votes, comment_count",
       "order: asc, desc",
       "limit: number",
       "p: page number",
