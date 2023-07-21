@@ -214,15 +214,17 @@
       "article_img_url": "DEFAULT IMAGE WILL BE INSERTED IF NOT SPECIFIED"
     },
     "exampleResponse": {
-      "article_id": 14,
-      "title": "The Whiskered Observer: A Feline's Perspective on Human Habits",
-      "topic": "cats",
-      "author": "lurker",
-      "body": "As a superior being adorned with luxurious fur, an eloquent tail, and mesmerizing eyes, I, the ever-watchful feline, have devoted countless hours to studying the peculiar habits of my human companions. From my vantage point on the windowsill, I gaze upon their comings and goings with a mixture of curiosity and amusement.",
-      "created_at": "2023-06-29T09:36:04.726Z",
-      "votes": 0,
-      "article_img_url": "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg",
-      "comment_count": 0
+      "article": {
+        "article_id": 14,
+        "title": "The Whiskered Observer: A Feline's Perspective on Human Habits",
+        "topic": "cats",
+        "author": "lurker",
+        "body": "As a superior being adorned with luxurious fur, an eloquent tail, and mesmerizing eyes, I, the ever-watchful feline, have devoted countless hours to studying the peculiar habits of my human companions. From my vantage point on the windowsill, I gaze upon their comings and goings with a mixture of curiosity and amusement.",
+        "created_at": "2023-06-29T09:36:04.726Z",
+        "votes": 0,
+        "article_img_url": "https://c2.staticflickr.com/4/3101/3207571173_42e980b0e4_b.jpg",
+        "comment_count": 0
+      }
     }
   },
   "POST /api/topics": {
