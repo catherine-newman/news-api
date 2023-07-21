@@ -71,6 +71,7 @@
     "description": "serves an array of all articles sorted by date created in descending order",
     "queries": [
       "topic",
+      "author",
       "sort_by: title, author, created_at, votes, comment_count",
       "order: asc, desc",
       "limit: number",

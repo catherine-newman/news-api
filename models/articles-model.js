@@ -18,6 +18,7 @@ exports.selectArticle = async (article_id) => {
 
 exports.selectArticles = async (
   topic,
+  author,
   sort_by = "created_at",
   order = "desc",
   limit,
@@ -42,12 +43,25 @@ exports.selectArticles = async (
     "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id)::INTEGER as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
   let queryStrFiltered =
     "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comment_id)::INTEGER as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
-  if (topic) {
+  if (topic && author) {
+    queryStr +=
+      " WHERE articles.topic = $1 AND articles.author = $2 GROUP BY articles.article_id";
+    queryStrFiltered +=
+      " WHERE articles.topic = $1 AND articles.author = $2 GROUP BY articles.article_id";
+    queryValues.push(topic, author);
+    queryValuesFiltered.push(topic, author);
+  } else if (topic) {
     queryStr += " WHERE articles.topic = $1 GROUP BY articles.article_id";
     queryStrFiltered +=
       " WHERE articles.topic = $1 GROUP BY articles.article_id";
     queryValues.push(topic);
     queryValuesFiltered.push(topic);
+  } else if (author) {
+    queryStr += " WHERE articles.author = $1 GROUP BY articles.article_id";
+    queryStrFiltered +=
+      " WHERE articles.author = $1 GROUP BY articles.article_id";
+    queryValues.push(author);
+    queryValuesFiltered.push(author);
   } else {
     queryStr += " GROUP BY articles.article_id";
     queryStrFiltered += " GROUP BY articles.article_id";

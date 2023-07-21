@@ -115,6 +115,16 @@ describe("GET /api/articles", () => {
     expect(articles).toHaveLength(1);
     expect(articles[0]).toHaveProperty("topic", "cats");
   });
+  test("articles can be filtered by author", async () => {
+    const res = await request(app)
+      .get("/api/articles?author=rogersop")
+      .expect(200);
+    const articles = res.body.articles;
+    expect(articles).toHaveLength(3);
+    articles.forEach((article) => {
+      expect(article).toHaveProperty("author", "rogersop");
+    });
+  });
   test("the number of articles in the response can be limited", async () => {
     const res = await request(app).get("/api/articles?limit=5").expect(200);
     const articles = res.body.articles;
@@ -140,6 +150,12 @@ describe("GET /api/articles", () => {
   test("status:404, responds with an error message when the filtering topic doesn't exist", async () => {
     const res = await request(app)
       .get("/api/articles?topic=banana")
+      .expect(404);
+    expect(res.body.msg).toBe("Not Found");
+  });
+  test("status:404, responds with an error message when the filtering author doesn't exist", async () => {
+    const res = await request(app)
+      .get("/api/articles?author=banana")
       .expect(404);
     expect(res.body.msg).toBe("Not Found");
   });
@@ -174,6 +190,18 @@ describe("GET /api/articles", () => {
       expect(article).toHaveProperty("topic", "mitch");
     });
     expect(res.body.total_count).toBe(12);
+  });
+  test("responds correctly when passed topic and author filter at once", async () => {
+    const res = await request(app)
+      .get("/api/articles?topic=mitch&author=rogersop&total_count=true")
+      .expect(200);
+    const articles = res.body.articles;
+    expect(articles).toHaveLength(2);
+    articles.forEach((article) => {
+      expect(article).toHaveProperty("topic", "mitch");
+      expect(article).toHaveProperty("author", "rogersop");
+    });
+    expect(res.body.total_count).toBe(2);
   });
 });
 
